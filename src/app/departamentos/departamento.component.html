@@ -1,0 +1,118 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-9 mx-auto">
+      <div class="text-center text-md-start">
+        <h1 class="fw-bolc text-primary">Departamentos</h1>
+      </div>
+
+      <div class="d-grid gap-2 d-md-block ">
+        <button type="button" class="btn btn-primary me-md-1 col-md-2" (click)="gravar(modal)">
+          <i class="pi pi-user-plus me-2"></i>Novo
+        </button>
+        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel">
+          <i class="pi pi-sign-out me-2"></i>Voltar
+        </a>
+      </div>
+
+      <div class="mt-4">
+        <table class="table table-light table-striped table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <tr *ngFor="let departamento of (departamentos$ | async)">
+              <td>{{departamento.nome}}</td>
+              <td>{{departamento.telefone}}</td>
+              <td class="d-grid d-md-block">
+                <button (click)="gravar(modal, departamento)" type="button"
+                  class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                  <i class="pi pi-user-edit"></i>
+                </button>
+                <button (click)="excluir(modalexcluir,departamento)" type="button" class="btn btn-outline-danger">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de Departamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+      <div class="form-group mb-3 position-relative">
+        <label for="nome" class="form-label">Nome do Departamento</label>
+        <input [ngClass]="(nome?.touched && nome?.invalid) ? 'is-invalid' : '' " formControlName="nome" type="text"
+          class="form-control" placeholder="Digite o nome do departamento">
+
+        <div class="invalid-tooltip" *ngIf="nome?.touched && nome?.invalid">
+          <span *ngIf="nome?.errors?.['required']">O nome precisa ser preenchido.</span>
+          <span *ngIf="nome?.errors?.['minlength']">O nome ter no minimo três letras.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="telefone" class="form-label">Telefone</label>
+        <input [ngClass]="(telefone?.touched && telefone?.invalid) ? 'is-invalid' : '' " formControlName="telefone"
+          type="number" class="form-control" placeholder="Digite o numero de telefone do departamento">
+
+        <div class="invalid-tooltip" *ngIf="telefone?.touched && telefone?.invalid">
+          <span *ngIf="telefone?.errors?.['required']">O telefone precisa ser preenchido.</span>
+          <span *ngIf="telefone?.errors?.['minlength']">O telefone ter no minimo 12 numeros.</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+
+      <button [disabled]="this.form.invalid" type="submit" class="btn btn-primary col-md-3">Gravar</button>
+    </div>
+
+  </form>
+</ng-template>
+
+<ng-template #modalexcluir let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Exclusão de Departamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')" >
+    <div class="modal-body">
+
+        <div class="form-group mb-3">
+          <h6 class="fw-semibold">Deseja realmente excluir o departamento?</h6>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="nome" class="form-label">Nome do Departamento</label>
+          <input type="text" formControlName="nome" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="telefone" class="form-label">Telefone</label>
+          <input type="text" formControlName="telefone" class="form-control" readonly>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3">Excluir</button>
+    </div>
+  </form>
+</ng-template>

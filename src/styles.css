@@ -1,0 +1,11 @@
+.bg-color{
+  background-color: #e8e8e8 !important;
+}
+
+.navbar-brand{
+  font-size: 25px !important;
+}
+
+.nav-link:hover {
+  color: #000 !important;
+}

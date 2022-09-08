@@ -1,0 +1,187 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-9 mx-auto">
+      <div class="text-center text-md-start">
+        <h1 class="fw-bolc text-primary">Funcionários</h1>
+      </div>
+
+      <div class="d-grid gap-2 d-md-block ">
+        <button type="button" class="btn btn-primary me-md-1 col-md-2" (click)="gravar(modal)">
+          <i class="pi pi-user-plus me-2"></i>Novo
+        </button>
+        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel">
+          <i class="pi pi-sign-out me-2"></i>Voltar
+        </a>
+      </div>
+
+      <div class="mt-4">
+        <table class="table table-light table-striped table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Função</th>
+              <th>Departamento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <tr *ngFor="let funcionario of (funcionarios$ | async)">
+              <td>{{funcionario.nome}}</td>
+              <td>{{funcionario.email}}</td>
+              <td>{{funcionario.funcao}}</td>
+              <td>{{funcionario.departamento?.nome}}</td>
+              <td class="d-grid d-md-block">
+                <button
+                (click)="gravar(modal, funcionario)"
+                type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                  <i class="pi pi-user-edit"></i>
+                </button>
+                <button
+                (click)="excluir(modalexcluir, funcionario)"
+                type="button" class="btn btn-outline-danger">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de Funcionário</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+
+
+      <div formGroupName="funcionario">
+
+
+        <div class="form-group mb-3 position-relative">
+          <label for="nome" class="form-label">Nome do Funcionário</label>
+
+          <input [ngClass]="(nome?.touched && nome?.invalid) ? 'is-invalid' : '' "
+          formControlName="nome" type="text"
+          class="form-control"
+          placeholder="Digite o nome do funcionário">
+          <div class="invalid-tooltip" *ngIf="nome?.touched && nome?.invalid">
+            <span *ngIf="nome?.errors?.['required']">O nome precisa ser preenchido.</span>
+            <span *ngIf="nome?.errors?.['minlength']">O nome precisa ter no minimo 3 letras.</span>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 position-relative">
+          <label for="email" class="form-label">Email</label>
+          <input [ngClass]="(email?.touched && email?.invalid) ? 'is-invalid' : '' "
+          formControlName="email" type="email" class="form-control"
+            placeholder="Digite o email do funcionário">
+            <div class="invalid-tooltip" *ngIf="email?.touched && email?.invalid">
+              <span *ngIf="email?.errors?.['required']">O email precisa ser preenchido.</span>
+              <span *ngIf="email?.errors?.['email']">O email precisa estar em um formato valido.</span>
+            </div>
+        </div>
+
+        <div class="form-group mb-3 position-relative">
+          <label for="funcao" class="form-label">Função</label>
+          <input [ngClass]="(funcao?.touched && funcao?.invalid) ? 'is-invalid' : '' "
+          formControlName="funcao" type="text" class="form-control"
+            placeholder="Digite a função do funcionário">
+
+            <div class="invalid-tooltip" *ngIf="funcao?.touched && funcao?.invalid">
+              <span *ngIf="funcao?.errors?.['required']">A função precisa ser preenchida.</span>
+              <span *ngIf="funcao?.errors?.['minlength']">A função ter no minimo três letras.</span>
+            </div>
+        </div>
+
+        <div class="form-group mb-3 position-relative">
+          <label for="departamentoId" class="form-label">Departamento</label>
+          <ng-select [ngClass]="(departamentoId?.touched && departamentoId?.invalid) ? 'is-invalid' : '' "
+          formControlName="departamentoId" [clearable]="false" [searchable]="false">
+            <ng-option *ngFor="let departamento of (departamentos$ | async)" [value]="departamento.id">
+              {{departamento.nome}}
+            </ng-option>
+          </ng-select>
+          <div class="invalid-tooltip" *ngIf="departamentoId?.touched && departamentoId?.invalid">
+            <span *ngIf="departamentoId?.errors?.['required']">Departamento precisa ser selecionado.</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="form-group mb-3" *ngIf="!this.id?.value">
+
+        <div class="form-group mb-3 position-relative">
+          <label for="senha" class="form-label">Senha do Funcionário</label>
+
+          <input [ngClass]="(senha?.touched && senha?.invalid) ? 'is-invalid' : '' "
+          formControlName="senha" type="password"
+          class="form-control"
+          placeholder="Digite a senha do funcionário">
+          <div class="invalid-tooltip" *ngIf="senha?.touched && senha?.invalid">
+            <span *ngIf="senha?.errors?.['required']">A senha precisa ser preenchida.</span>
+            <span *ngIf="senha?.errors?.['minlength']">A senha precisa ter no minimo 3 letras.</span>
+          </div>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+
+  <div class="modal-footer">
+     <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+     <button [disabled]="this.form.invalid" type="submit" class="btn btn-primary col-md-3">Gravar</button>
+  </div>
+
+</form>
+</ng-template>
+
+<ng-template #modalexcluir let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Exclusão de Funcionário</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')" >
+    <div class="modal-body">
+        <div class="form-group mb-3">
+          <h6 class="fw-semibold">Deseja realmente excluir o funcionário?</h6>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="nome" class="form-label">Nome do Funcionário</label>
+          <input type="text" formControlName="nome" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="email" class="form-label">Email do Funcionário</label>
+          <input type="text" formControlName="email" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="departamento" class="form-label">Departamento do Funcionário</label>
+          <input type="text" formControlName="departamento" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="funcao" class="form-label">Função do Funcionário</label>
+          <input type="text" formControlName="funcao" class="form-control" readonly>
+        </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3">Excluir</button>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,221 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-9 mx-auto">
+      <div class="text-center text-md-start">
+        <h1 class="fw-bolc text-primary">Equipamentos</h1>
+      </div>
+
+      <div class="d-grid gap-2 d-md-block ">
+        <button type="button" class="btn btn-primary me-md-1 col-md-2" (click)="gravar(modal)">
+          <i class="pi pi-user-plus me-2"></i>Novo
+        </button>
+        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel">
+          <i class="pi pi-sign-out me-2"></i>Voltar
+        </a>
+      </div>
+
+      <div class="mt-4">
+        <table class="table table-light table-striped table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nº de Série</th>
+              <th>Nome do Equipamento</th>
+              <th>Preço de Aquisição</th>
+              <th>Data de Fabricação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <tr *ngFor="let equipamento of (equipamentos$ | async)">
+              <td>{{equipamento.numeroSerie}}</td>
+              <td>{{equipamento.nomeEquipamento}}</td>
+              <td>{{equipamento.preco | currency: 'BRL'}}</td>
+              <td>{{equipamento.dataFabricacao | date: 'dd/MM/yyyy'}}</td>
+              <td class="d-grid d-md-block">
+                <button (click)="gravarEditar(modalEditar,equipamento)" type="button"
+                  class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                  <i class="pi pi-user-edit"></i>
+                </button>
+                <button (click)="excluir(modalexcluir,equipamento)" type="button" class="btn btn-outline-danger">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de Equipamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+
+      <div class="form-group mb-3 position-relative">
+        <label for="numeroSerie" class="form-label">Nº de Série</label>
+        <input [ngClass]="(numeroSerie?.touched && numeroSerie?.invalid) ? 'is-invalid' : '' "
+          formControlName="numeroSerie" type="text" class="form-control"
+          placeholder="Digite o número de sério do equipamento">
+
+        <div class="invalid-tooltip" *ngIf="numeroSerie?.touched && numeroSerie?.invalid">
+          <span *ngIf="numeroSerie?.errors?.['required']">O numero de serie precisa ser preenchida.</span>
+          <span *ngIf="numeroSerie?.errors?.['minlength']">O numero de serie deve ter no minimo seis caracteres.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="nomeEquipamento" class="form-label">Nome do Equipamento</label>
+        <input [ngClass]="(nomeEquipamento?.touched && nomeEquipamento?.invalid) ? 'is-invalid' : '' "
+          formControlName="nomeEquipamento" type="text" class="form-control" placeholder="Digite o nome de Equipamento">
+
+        <div class="invalid-tooltip" *ngIf="nomeEquipamento?.touched && nomeEquipamento?.invalid">
+          <span *ngIf="nomeEquipamento?.errors?.['required']">O nome do equipamento precisa ser preenchido.</span>
+          <span *ngIf="nomeEquipamento?.errors?.['minlength']">O nome do equipamento deve ter no minimo três
+            letras.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="preco" class="form-label">Preço de Aquisição</label>
+        <input [ngClass]="(preco?.touched && preco?.invalid) ? 'is-invalid' : '' " currencyMask
+          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' , align: 'left'}" formControlName="preco"
+          type="value" class="form-control" placeholder="Digite o preço do Equipamento" />
+
+        <div class="invalid-tooltip" *ngIf="preco?.touched && preco?.invalid">
+          <span *ngIf="preco?.errors?.['required']">O preço do equipamento precisa ser preenchido.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="dataFabricacao" class="form-label">Data de Fabricação</label>
+        <input [ngClass]="(dataFabricacao?.touched && dataFabricacao?.invalid) ? 'is-invalid' : '' "
+          formControlName="dataFabricacao" type="date" class="form-control">
+
+        <div class="invalid-tooltip" *ngIf="dataFabricacao?.touched && dataFabricacao?.invalid">
+          <span *ngIf="dataFabricacao?.errors?.['required']">A data de fabricação deve ser informada</span>
+          <span *ngIf="dataFabricacao?.errors?.['invalidDate']">A data de fabricação deve ser anterior a data de
+            hoje.</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+
+      <button [disabled]="this.form.invalid" type="submit" class="btn btn-primary col-md-3">Gravar</button>
+    </div>
+
+  </form>
+</ng-template>
+
+
+<ng-template #modalEditar let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de Equipamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+      <div class="form-group mb-3 disabled  ">
+        <label for="id" class="form-label">Id do Equipamento</label>
+        <input formControlName="id" type="text" class="form-control" placeholder="numero de identificação" readonly />
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="numeroSerie" class="form-label">Nº de Série</label>
+        <input [ngClass]="(numeroSerie?.touched && numeroSerie?.invalid) ? 'is-invalid' : '' "
+          formControlName="numeroSerie" type="text" class="form-control"
+          placeholder="Digite o número de sério do equipamento">
+
+        <div class="invalid-tooltip" *ngIf="numeroSerie?.touched && numeroSerie?.invalid">
+          <span *ngIf="numeroSerie?.errors?.['required']">O numero de serie precisa ser preenchida.</span>
+          <span *ngIf="numeroSerie?.errors?.['minlength']">O numero de serie deve ter no minimo seis caracteres.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="nomeEquipamento" class="form-label">Nome do Equipamento</label>
+        <input [ngClass]="(nomeEquipamento?.touched && nomeEquipamento?.invalid) ? 'is-invalid' : '' "
+          formControlName="nomeEquipamento" type="text" class="form-control" placeholder="Digite o nome de Equipamento">
+
+        <div class="invalid-tooltip" *ngIf="nomeEquipamento?.touched && nomeEquipamento?.invalid">
+          <span *ngIf="nomeEquipamento?.errors?.['required']">O nome do equipamento precisa ser preenchido.</span>
+          <span *ngIf="nomeEquipamento?.errors?.['minlength']">O nome do equipamento deve ter no minimo três
+            letras.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="preco" class="form-label">Preço de Aquisição</label>
+        <input [ngClass]="(preco?.touched && preco?.invalid) ? 'is-invalid' : '' " currencyMask
+          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' , align: 'left'}" formControlName="preco"
+          type="value" class="form-control" placeholder="Digite o preço do Equipamento" />
+
+        <div class="invalid-tooltip" *ngIf="preco?.touched && preco?.invalid">
+          <span *ngIf="preco?.errors?.['required']">O preço do equipamento precisa ser preenchido.</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3 position-relative">
+        <label for="dataFabricacao" class="form-label">Data de Fabricação</label>
+        <input [ngClass]="(dataFabricacao?.touched && dataFabricacao?.invalid) ? 'is-invalid' : '' "
+          formControlName="dataFabricacao" type="date" class="form-control">
+
+        <div class="invalid-tooltip" *ngIf="dataFabricacao?.touched && dataFabricacao?.invalid">
+          <span *ngIf="dataFabricacao?.errors?.['required']">A data de fabricação deve ser informada</span>
+          <span *ngIf="dataFabricacao?.errors?.['invalidDate']">A data de fabricação deve ser anterior a data de
+            hoje.</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+
+      <button [disabled]="this.form.invalid" type="submit" class="btn btn-primary col-md-3">Gravar</button>
+    </div>
+
+  </form>
+</ng-template>
+
+<ng-template #modalexcluir let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Exclusão de Equipamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')" >
+    <div class="modal-body">
+        <div class="form-group mb-3">
+          <h6 class="fw-semibold">Deseja realmente excluir o equipamento?</h6>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="nomeEquipamento" class="form-label">Nome do Equipamento</label>
+          <input type="text" formControlName="nomeEquipamento" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="preco" class="form-label">Preço de Aquisição</label>
+          <input type="text" formControlName="preco" class="form-control" readonly>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3">Excluir</button>
+    </div>
+  </form>
+</ng-template>
+
