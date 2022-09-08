@@ -1,0 +1,151 @@
+<div class="container">
+  <div class="row">
+    <!-- Conteudo Principal -->
+    <div class="col-12 col-md-10 col-lg-9 mx-auto">
+      <div class="text-center text-md-start">
+        <h1 class="fw-bolc text-primary">Requisições</h1>
+      </div>
+
+      <div class="d-grid gap-2 d-md-block ">
+        <button type="button" class="btn btn-primary me-md-1 col-md-2" (click)="gravar(modal)">
+          <i class="pi pi-user-plus me-2"></i>Novo
+        </button>
+        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel">
+          <i class="pi pi-sign-out me-2"></i>Voltar
+        </a>
+      </div>
+
+      <div class="mt-4">
+        <table class="table table-light table-striped table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Descrição</th>
+              <th>Data Abertura</th>
+              <th>Departamento</th>
+              <th>Equipamento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <tr *ngFor="let requisicao of (requisicoes$ | async)">
+              <td>{{requisicao.descricao}}</td>
+              <td>{{requisicao.dataAbertura| date: 'dd/MM/yyyy'}}</td>
+              <td>{{requisicao.departamento?.nome}}</td>
+              <td>{{requisicao.equipamento?.nomeEquipamento ? requisicao.equipamento?.nomeEquipamento : "Não informado" }}</td>
+              <td class="d-grid d-md-block">
+                <button
+                (click)="gravar(modal, requisicao)"
+                type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                  <i class="pi pi-user-edit"></i>
+                </button>
+                <button
+                (click)="excluir(modalexcluir, requisicao)"
+                type="button" class="btn btn-outline-danger">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de Requisições</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+
+
+
+
+        <div class="form-group mb-3 position-relative">
+          <label for="descricao" class="form-label">Descrição da Requisição</label>
+
+          <input [ngClass]="(descricao?.touched && descricao?.invalid) ? 'is-invalid' : '' "
+          formControlName="descricao" type="text"
+          class="form-control"
+          placeholder="Digite o nome do funcionário">
+          <div class="invalid-tooltip" *ngIf="descricao?.touched && descricao?.invalid">
+            <span *ngIf="descricao?.errors?.['required']">O nome precisa ser preenchido.</span>
+            <span *ngIf="descricao?.errors?.['minlength']">O nome precisa ter no minimo 3 letras.</span>
+          </div>
+        </div>
+
+
+        <div class="form-group mb-3 position-relative">
+          <label for="departamentoId" class="form-label">Departamento</label>
+          <ng-select [ngClass]="(departamentoId?.touched && departamentoId?.invalid) ? 'is-invalid' : '' "
+          formControlName="departamentoId" [clearable]="false" [searchable]="false">
+            <ng-option *ngFor="let departamento of (departamentos$ | async)" [value]="departamento.id">
+              {{departamento.nome}}
+            </ng-option>
+          </ng-select>
+          <div class="invalid-tooltip" *ngIf="departamentoId?.touched && departamentoId?.invalid">
+            <span *ngIf="departamentoId?.errors?.['required']">Departamento precisa ser selecionado.</span>
+          </div>
+        </div>
+
+        <div class="form-group mb-3 position-relative">
+          <label for="equipamentoId" class="form-label">Equipamento</label>
+          <ng-select [ngClass]="(equipamentoId?.touched && equipamentoId?.invalid) ? 'is-invalid' : '' "
+          formControlName="equipamentoId" [clearable]="false" [searchable]="false">
+            <ng-option *ngFor="let equipamento of (equipamentos$ | async)" [value]="equipamento.id">
+              {{equipamento.nomeEquipamento}}
+            </ng-option>
+          </ng-select>
+          <div class="invalid-tooltip" *ngIf="equipamentoId?.touched && equipamentoId?.invalid">
+            <span *ngIf="equipamentoId?.errors?.['required']">Departamento precisa ser selecionado.</span>
+          </div>
+        </div>
+
+
+
+
+
+
+    </div>
+
+
+  <div class="modal-footer">
+     <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+     <button [disabled]="this.form.invalid" type="submit" class="btn btn-primary col-md-3">Gravar</button>
+  </div>
+
+</form>
+</ng-template>
+
+<ng-template #modalexcluir let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Exclusão de Funcionário</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Fechar')"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')" >
+    <div class="modal-body">
+        <div class="form-group mb-3">
+          <h6 class="fw-semibold">Deseja realmente excluir a requisição?</h6>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="descricao" class="form-label">Descrição da Requisição</label>
+          <input type="text" formControlName="descricao" class="form-control" readonly>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="equipamentoId" class="form-label">Equipamento da Requisição</label>
+          <input type="text" formControlName="equipamentoId" class="form-control" readonly>
+        </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-primary col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3">Excluir</button>
+    </div>
+  </form>
+</ng-template>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { Equipamento } from '../models/equipamentos.model';
+import { Equipamento } from '../models/equipamento.model';
 
 @Injectable({
   providedIn: 'root'

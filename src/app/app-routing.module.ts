@@ -23,8 +23,12 @@ const routes: Routes = [
   loadChildren:() => import("./funcionarios/funcionario.module")
     .then(m => m.FuncionarioModule),
     canActivate:[AuthGuard]
+},
+{path: "requisicoes",
+  loadChildren:() => import("./requisicoes/requisicao.module")
+    .then(m => m.RequisicaoModule),
+    canActivate:[AuthGuard]
 }
-
 ];
 
 @NgModule({
@@ -32,3 +36,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+//teste

@@ -134,8 +134,16 @@ export class FuncionarioComponent implements OnInit {
   }
 
   public async excluir(modalExcluir: TemplateRef<any>, funcionario: Funcionario) {
-    this.form.get("funcionario")?.setValue(funcionario);
-
+    if (funcionario)
+    {
+      const departamento = funcionario.departamento ? funcionario.departamento : null;
+      const funcionarioCompleto = {
+        ...funcionario,
+        departamento
+      }
+      this.form.get("funcionario")?.setValue(funcionarioCompleto);
+    }
+    
     try {
       await this.modalService.open(modalExcluir).result;
 

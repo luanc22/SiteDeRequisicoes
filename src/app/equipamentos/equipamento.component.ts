@@ -3,9 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { Equipamento } from './models/equipamentos.model';
 import { EquipamentoService } from './services/equipamento.service';
 import { ValidatorDate } from './date.validador';
+import { Equipamento } from './models/equipamento.model';
 
 @Component({
   selector: 'app-equipamento',
